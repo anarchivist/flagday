@@ -1,3 +1,5 @@
+![paisley logo](assets/paisley-1bit-firmware.png)
+
 # flagday
 
 off the grid, decentralized cruising. prepared for [**sweeThe4rTs**](https://seattlepride.org/events/sweethearts-a-t4t-art-show), opening February 13, 2026, at Common Objects, Seattle, WA.
