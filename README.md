@@ -13,3 +13,7 @@ flagday's `firmware` directory is a Git submodule to [anarchivist/meshtastic-fir
 3. `git submodule update --init --recursive`
 
 because of how PlatformIO works, you'll need to open up the `firmware` directory in its own VSCode window. annoying, i know. beyond that, you can more or less just consult the [Building Meshtastic Firmware](https://meshtastic.org/docs/development/firmware/build/) page in the official docs.
+
+## prototype
+
+![initial breadboard prototype](assets/flagday_bb.png)
