@@ -1,0 +1,13 @@
+[project]
+name = "flagday"
+version = "0.1.0"
+description = "off the grid, decentralizedd cruising"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "abjad>=3.31",
+    "meshtastic>=2.7.6",
+    "mutwo-core>=2.0.0",
+    "mutwo-midi>=0.12.1",
+    "mutwo-music>=0.29.0",
+]
