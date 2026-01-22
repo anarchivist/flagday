@@ -29,6 +29,7 @@ def make_staff_from_leaves(leaves: LeafCollection) -> abjad.Score:
     staff = abjad.illustrators.make_piano_score(leaves)
     meter = abjad.Meter(abjad.meter.make_best_guess_rtc((3, 4)))
     meter.rewrite(staff[:], maximum_dot_count=1)
+    abjad.attach(abjad.BarLine("|."), abjad.select.note(staff, -1))
     return staff
 
 
