@@ -16,6 +16,14 @@ because of how PlatformIO works, you'll need to open up the `firmware` directory
 
 beyond that, you can more or less just consult the [Building Meshtastic Firmware](https://meshtastic.org/docs/development/firmware/build/) page in the official docs.
 
+## scripts, scores, and more
+
+the code that generates the score (ringtones) and perhaps other utility code is in a Python project in this repo (see the `flagday` and `tests`) directory. dependencies are managed by `uv`. 
+
+1. prereqs: Python >= 3.14, uv, Lilypond.
+2. clone this repo
+3. `uv sync`
+4. then, e.g., `uv run python -m flagday.composition.maker`
 
 ## prototype
 
