@@ -59,7 +59,9 @@ def make_score_from_leaves(leaves: LeafCollection) -> abjad.Score:
 #     return abjad.Score([staff], name="flagday")
 
 
-def engrave(series: SeriesSeq = generate_random_series()) -> None:
+def prepare_lilypond_file(
+        series: SeriesSeq = generate_random_series()
+    ) -> abjad.LilyPondFile:
     leaves = make_series_leaves(series)
     score = make_score_from_leaves(leaves)
     # staff.remove_commands().append("Note_head_engraver")
@@ -67,8 +69,9 @@ def engrave(series: SeriesSeq = generate_random_series()) -> None:
     # staff.remove_commands().append("Rest_engraver")
     # staff.consists_commands().append("Completion_rest_engraver")
     lilypond_file = abjad.LilyPondFile([PREAMBLE, score])
-    abjad.show(lilypond_file)
+    return lilypond_file
 
 
 if __name__ == "__main__":
-    engrave()
+    ly = prepare_lilypond_file()
+    abjad.show(ly)
