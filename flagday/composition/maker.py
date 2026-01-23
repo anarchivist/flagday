@@ -68,7 +68,10 @@ def prepare_lilypond_file(
     # staff.consists_commands().append("Completion_head_engraver")
     # staff.remove_commands().append("Rest_engraver")
     # staff.consists_commands().append("Completion_rest_engraver")
-    lilypond_file = abjad.LilyPondFile([PREAMBLE, score])
+    midi_block = abjad.Block("midi")
+    score_block = abjad.Block("score", [score, midi_block])
+    lilypond_file = abjad.LilyPondFile([PREAMBLE, score_block])
+    abjad.persist.as_midi(lilypond_file, 'flagday.mid')
     return lilypond_file
 
 
