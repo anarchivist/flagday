@@ -1,3 +1,4 @@
+import re
 from typing import List
 
 import abjad
@@ -34,7 +35,7 @@ date = #(strftime "%Y-%m-%d" (localtime (current-time)))
                 \line {
                         \override #'(font-name . "DINish Regular Italic")
                         \normal-text \smaller \italic
-                        "Piezoelectric buzzers should sound at irregular intervals during the piece's duration as if they were ringtones."  # noqa: E501
+                        "Piezoelectric buzzers should sound at irregular intervals during the piece's duration as if they were ringtones."
                 }
                 \vspace #2
             }
@@ -107,6 +108,7 @@ def make_staff_and_voice(
     current_series = series.rotate(offset * factor)
     voice = abjad.Voice(name=f"Voice_{offset}")
     notes = make_series_notes(current_series)
+    print(rtttl_from_notes(notes[:]))
     voice.extend(notes)
     staff = abjad.Staff([voice], name=f"Staff_{offset}")
     string = r"""
@@ -117,6 +119,23 @@ def make_staff_and_voice(
     abjad.attach(instrument_name, notes[0])
     return staff
 
+def rtttl_from_notes(notes: List[abjad.Note | abjad.Tuplet]) -> str:
+    abjad.iterpitches.respell_with_sharps(notes[:])
+    rtttl = []
+    for c in abjad.iterate.components(notes):
+        if isinstance(c, abjad.Note):
+            dot = ''
+            pitch = c.written_pitch().get_name_in_locale('us').lower() # type: ignore
+            duration = c.written_duration().lilypond_duration_string()
+            d = re.findall(r"\d+", duration)
+            if '.' in duration:
+                rtttl.append(f"{d[0]}{pitch}.")
+                if '..' in duration:
+                    rtttl.append(f"{int(d[0])*2}{pitch}")
+            else:
+                rtttl.append(f"{d[0]}{pitch}")
+
+    return 'd=16,o=5,b=150:' + ','.join(rtttl)
 
 def make_score_from_series(series: SeriesSeq) -> abjad.Score:
     """
