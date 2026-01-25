@@ -39,6 +39,20 @@ class TestSeriesGeneration(unittest.TestCase):
             abjad.Duration(6, 16),
             abjad.Duration(1, 16),
         ]
+        self.expected_octave_series = [
+            abjad.Octave(5),
+            abjad.Octave(4),
+            abjad.Octave(5),
+            abjad.Octave(4),
+            abjad.Octave(5),
+            abjad.Octave(4),
+            abjad.Octave(5),
+            abjad.Octave(4),
+            abjad.Octave(5),
+            abjad.Octave(4),
+            abjad.Octave(7),
+            abjad.Octave(7)
+        ]
 
     def test_babbitt_timepoint_set_from_list(self) -> None:
         self.assertEqual(
@@ -64,8 +78,14 @@ class TestSeriesGeneration(unittest.TestCase):
             series.BASE_SERIES
         )
 
-    def test_gen(self) -> None:
+    def test_generate_pitch_series(self) -> None:
         self.assertEqual(
             series.generate_pitch_series(self.test_series),
             self.expected_pitch_series
+        )
+
+    def test_generate_octave_series(self) -> None:
+        self.assertEqual(
+            series.generate_octave_series(self.test_series),
+            self.expected_octave_series
         )
