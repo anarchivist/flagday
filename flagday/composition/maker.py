@@ -1,3 +1,4 @@
+import copy
 import re
 from typing import List
 
@@ -10,9 +11,8 @@ from flagday.composition.series import (
     generate_random_series,
 )
 
-type LeafCollection = List[abjad.Note | abjad.Tuplet]
 
-PREAMBLE: str = r"""#(set-global-staff-size 20)
+PREAMBLE: str = r"""#(set-global-staff-size 18)
 date = #(strftime "%Y-%m-%d" (localtime (current-time)))
 \header {
     composer = \markup {
@@ -50,7 +50,7 @@ date = #(strftime "%Y-%m-%d" (localtime (current-time)))
 \layout {
     \context {
         \Staff
-        \override VerticalAxisGroup.staff-staff-spacing.minimum-distance = #22
+        \override VerticalAxisGroup.staff-staff-spacing.minimum-distance = #20
     }
     \context {
         \Score
@@ -58,13 +58,15 @@ date = #(strftime "%Y-%m-%d" (localtime (current-time)))
     }
 }
 \paper {
-    page-count = 1
-    system-system-spacing.stretchability = #15
+    %page-count = 1
+    system-system-spacing.stretchability = #12
+    property-defaults.fonts.sans = "DINish Regular"
+    property-defaults.fonts.typewriter = "Cascadia Code PL"
 }
 """
 
 
-def make_series_notes(series: SeriesSeq) -> LeafCollection:
+def make_series_notes(series: SeriesSeq) -> List[abjad.Note | abjad.Tuplet]:
     """
     make a list set of abjad.Notes from an input seriese
 
@@ -108,7 +110,7 @@ def make_staff_and_voice(
     current_series = series.rotate(offset * factor)
     voice = abjad.Voice(name=f"Voice_{offset}")
     notes = make_series_notes(current_series)
-    print(rtttl_from_notes(notes[:]))
+    rtttl = rtttl_from_notes(notes)
     voice.extend(notes)
     staff = abjad.Staff([voice], name=f"Staff_{offset}")
     string = r"""
@@ -116,26 +118,35 @@ def make_staff_and_voice(
         \hspace #-0.75 \override #'(font-name . "DINish Regular") "Piezo"""
     string += f" {offset + 1}\" " + "\n}"
     instrument_name = abjad.InstrumentName(string)
+    rtttl_anno = abjad.Markup(
+            r"\markup \fontsize #-5 \override #'(font-family . typewriter) "
+            r"{ \hspace #-9"
+            f"\"P{offset + 1}:{rtttl}\""
+            r"}"
+    )
     abjad.attach(instrument_name, notes[0])
+    abjad.attach(rtttl_anno, notes[0])
     return staff
 
+
 def rtttl_from_notes(notes: List[abjad.Note | abjad.Tuplet]) -> str:
-    abjad.iterpitches.respell_with_sharps(notes[:])
+    rnotes = copy.deepcopy(notes)
+    abjad.iterpitches.respell_with_sharps(rnotes)
     rtttl = []
-    for c in abjad.iterate.components(notes):
+    for c in abjad.iterate.components(rnotes):
         if isinstance(c, abjad.Note):
-            dot = ''
-            pitch = c.written_pitch().get_name_in_locale('us').lower() # type: ignore
+            pitch = c.written_pitch().get_name_in_locale('us').lower()  # type: ignore # noqa: e%01
             duration = c.written_duration().lilypond_duration_string()
             d = re.findall(r"\d+", duration)
             if '.' in duration:
                 rtttl.append(f"{d[0]}{pitch}.")
                 if '..' in duration:
-                    rtttl.append(f"{int(d[0])*2}{pitch}")
+                    rtttl.append(f"{int(d[0])*4}{pitch}")
             else:
                 rtttl.append(f"{d[0]}{pitch}")
 
     return 'd=16,o=5,b=150:' + ','.join(rtttl)
+
 
 def make_score_from_series(series: SeriesSeq) -> abjad.Score:
     """
@@ -180,9 +191,9 @@ def prepare_lilypond_file(
     # staff.remove_commands().append("Rest_engraver")
     # staff.consists_commands().append("Completion_rest_engraver")
 
-    midi_block = abjad.Block("midi")
+    # midi_block = abjad.Block("midi")
     layout_block = abjad.Block("layout")
-    score_block = abjad.Block("score", [score, midi_block, layout_block])
+    score_block = abjad.Block("score", [score, layout_block])
     lilypond_file = abjad.LilyPondFile([PREAMBLE, score_block])
     return lilypond_file
 
