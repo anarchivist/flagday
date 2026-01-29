@@ -1,0 +1,81 @@
+# start of Meshtastic configure yaml
+# default channel_url: https://meshtastic.org/e/#CgcSAQE6AggNEgwIATgBQANIAVAeaAE
+canned_messages: "\U0001F441\uFE0F|\U0001F440|\U0001F44D|\U0001F44E|\U0001F4A7|\u2192\uFE0F|\U0001F573\uFE0F|\U0001F4AA|\U0001F32C\uFE0F|\U0001F525|\u2753|\U0001F32B\uFE0F" # 👁️|👀|👍|👎|💧|→|🕳️|💪|🌬️|🔥|❓|🌫️
+channel_url: https://meshtastic.org/e/#Ch4SELeLRSwBgwGLeLRSwBgwGNMaBnB1YmxpYygBOgASFwgBEAgY-gEgCygFOAFAA0gBUB5YDGgB
+config:
+  bluetooth:
+    enabled: true
+    fixedPin: 123456 # while set, it still uses random PINs given the default
+  device:
+    buzzerGpio: 45 # "Buzzer override pin" - just for PWM buzzer
+    nodeInfoBroadcastSecs: 10800
+    tzdef: PST8PDT,M3.2.0/2:00:00,M11.1.0/2:00:00
+  display:
+    autoScreenCarouselSecs: 30
+    screenOnSecs: 180
+  lora:
+    bandwidth: 250
+    channelNum: 12 # 907.75 MHz
+    codingRate: 5
+    hopLimit: 3
+    modemPreset: SHORT_TURBO
+    region: US
+    spreadFactor: 11
+    sx126xRxBoostedGain: true
+    txEnabled: true
+    txPower: 30
+    usePreset: true
+  network:
+    ntpServer: meshtastic.pool.ntp.org
+  position:
+    broadcastSmartMinimumDistance: 100
+    broadcastSmartMinimumIntervalSecs: 300
+    gpsMode: NOT_PRESENT
+    gpsUpdateInterval: 120
+    positionBroadcastSecs: 3600
+    positionBroadcastSmartEnabled: true
+    positionFlags: 811
+  power:
+    lsSecs: 300
+    minWakeSecs: 10
+    sdsSecs: 4294967295
+    waitBluetoothSecs: 60
+  security:
+    # privateKey: do not set in base config
+    # publicKey: do not set in base config
+    serialEnabled: true
+module_config:
+  ambientLighting:
+    blue: 180
+    current: 10
+    green: 135
+    red: 119
+  cannedMessage:
+    allowInputSource: rotEnc1
+    enabled: true
+    inputbrokerEventCcw: DOWN
+    inputbrokerEventCw: UP
+    inputbrokerEventPress: SELECT
+    inputbrokerPinA: 3
+    inputbrokerPinB: 4
+    inputbrokerPinPress: 7
+    rotary1Enabled: true
+  externalNotification:
+    alertBell: true
+    alertBellBuzzer: true
+    alertMessage: true
+    alertMessageBuzzer: true
+    enabled: true
+    outputBuzzer: 45
+    usePwm: true
+  mqtt:
+    address: mqtt.meshtastic.org
+    encryptionEnabled: true
+    password: large4cats
+    root: msh/US
+    username: meshdev
+  telemetry:
+    deviceUpdateInterval: 2147483647
+# owner: do not set in base config
+# owner_short: do not set in base config
+# ringtone: do not set in base config

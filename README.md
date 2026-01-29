@@ -14,7 +14,13 @@ flagday's `firmware` directory is a Git submodule to [anarchivist/meshtastic-fir
 
 because of how PlatformIO works, you'll need to open up the `firmware` directory in its own VSCode window. annoying, i know. after that, set `env:flagday` as your default project environment and build away.
 
-beyond that, you can more or less just consult the [Building Meshtastic Firmware](https://meshtastic.org/docs/development/firmware/build/) page in the official docs.
+beyond that, you can more or less just consult the [Building Meshtastic Firmware](https://meshtastic.org/docs/development/firmware/build/) page in the official docs. 
+
+device configuration is handled through the base configuration file in `config/base.yaml` - figure out how to extend that for keys, owner names, and ringtones. to update a device, you can do something like this:
+
+```bash
+uv run meshtastic -s --port /dev/cu.usbserial-0001 --configure config/base.yaml
+```
 
 ## scripts, scores, and more
 
