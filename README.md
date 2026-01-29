@@ -16,12 +16,6 @@ because of how PlatformIO works, you'll need to open up the `firmware` directory
 
 beyond that, you can more or less just consult the [Building Meshtastic Firmware](https://meshtastic.org/docs/development/firmware/build/) page in the official docs. 
 
-device configuration is handled through the base configuration file in `config/base.yaml` - figure out how to extend that for keys, owner names, and ringtones. to update a device, you can do something like this:
-
-```bash
-uv run meshtastic -s --port /dev/cu.usbserial-0001 --configure config/base.yaml
-```
-
 ## scripts, scores, and more
 
 the code that generates the score (ringtones) and perhaps other utility code is in a Python project in this repo (see the `flagday` and `tests`) directory. dependencies are managed by `uv`. 
@@ -30,6 +24,21 @@ the code that generates the score (ringtones) and perhaps other utility code is 
 2. clone this repo
 3. `uv sync`
 4. then, e.g., `uv run python -m flagday.composition.maker`
+
+## device configuration
+
+device configuration is handled through the base configuration file in `config/base.yaml`:
+
+```bash
+uv run meshtastic -s --port /dev/cu.usbserial-0001 --configure config/base.yaml 
+# or uv run meshtastic --ble 'device_name' ... if you want to use Bluetooth instead
+```
+
+if you want to merge two configs (e.g. the base config and a device specific config), you can use [`yq`](https://mikefarah.gitbook.io/yq):
+
+```bash
+yq -r '. *= load("config/base.yaml") | sort_keys(.) | ... comments=""' config/device_flagday2.yaml > tmp/flagday2.yaml
+```
 
 ## prototype
 
