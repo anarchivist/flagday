@@ -1,0 +1,37 @@
+# start of Meshtastic configure yaml
+canned_messages: "Hi|Bye|Yes|No"
+channel_url: https://meshtastic.org/e/#CgcSAQE6AggNEgwIATgBQANIAVAeaAE
+config:
+  bluetooth:
+    enabled: true
+  device:
+    nodeInfoBroadcastSecs: 10800
+    tzdef: PST8PDT,M3.2.0/2:00:00,M11.1.0/2:00:00
+  lora:
+    hopLimit: 3
+    region: US
+    sx126xRxBoostedGain: true
+    txEnabled: true
+    txPower: 30
+    usePreset: true
+  network:
+    ntpServer: meshtastic.pool.ntp.org
+  position:
+    broadcastSmartMinimumDistance: 100
+    broadcastSmartMinimumIntervalSecs: 300
+    gpsMode: NOT_PRESENT
+    gpsUpdateInterval: 120
+    positionBroadcastSecs: 3600
+    positionBroadcastSmartEnabled: true
+    positionFlags: 811
+  power:
+    lsSecs: 300
+    minWakeSecs: 10
+    sdsSecs: 4294967295
+    waitBluetoothSecs: 60
+  security:
+    serialEnabled: true
+owner: Meshtastic NNNN
+owner_short: NNNN
+ringtone: smbdeath:d=4,o=5,b=90:32c6,32c6,32c6,8p,16b,16f6,16p,16f6,16f.6,16e.6,16d6,16c6,16p,16e,16p,16c
+

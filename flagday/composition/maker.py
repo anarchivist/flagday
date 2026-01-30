@@ -33,9 +33,9 @@ date = #(strftime "%Y-%m-%d" (localtime (current-time)))
                     \small  "(5'00\" ~ 20'00\")"}
                 \vspace #0.5
                 \line {
-                        \override #'(font-name . "DINish Regular Italic")
-                        \normal-text \smaller \italic
-                        "Piezoelectric buzzers should sound at irregular intervals during the piece's duration as if they were ringtones."
+                    \override #'(font-name . "DINish Regular Italic")
+                    \normal-text \smaller \italic
+                    "Piezoelectric buzzers should sound at irregular intervals during the piece's duration as if they were ringtones."
                 }
                 \vspace #2
             }
@@ -58,7 +58,7 @@ date = #(strftime "%Y-%m-%d" (localtime (current-time)))
     }
 }
 \paper {
-    %page-count = 1
+    page-count = 1
     system-system-spacing.stretchability = #12
     property-defaults.fonts.sans = "DINish Regular"
     property-defaults.fonts.typewriter = "Cascadia Code PL"

@@ -10,6 +10,8 @@ dependencies = [
     "mutwo-core>=2.0.0",
     "mutwo-midi>=0.12.1",
     "mutwo-music>=0.29.0",
+    "pyyaml>=6.0.3",
+    "rtttl>=0.2",
 ]
 
 [dependency-groups]

@@ -192,6 +192,8 @@ dependencies = [
     { name = "mutwo-core" },
     { name = "mutwo-midi" },
     { name = "mutwo-music" },
+    { name = "pyyaml" },
+    { name = "rtttl" },
 ]
 
 [package.dev-dependencies]
@@ -207,6 +209,8 @@ requires-dist = [
     { name = "mutwo-core", specifier = ">=2.0.0" },
     { name = "mutwo-midi", specifier = ">=0.12.1" },
     { name = "mutwo-music", specifier = ">=0.29.0" },
+    { name = "pyyaml", specifier = ">=6.0.3" },
+    { name = "rtttl", specifier = ">=0.2" },
 ]
 
 [package.metadata.requires-dev]
@@ -776,6 +780,12 @@ sdist = { url = "https://files.pythonhosted.org/packages/ae/f9/41dc953bbeb056c17
 wheels = [
     { url = "https://files.pythonhosted.org/packages/04/54/6f679c435d28e0a568d8e8a7c0a93a09010818634c3c3907fc98d8983770/roman_numerals-4.1.0-py3-none-any.whl", hash = "sha256:647ba99caddc2cc1e55a51e4360689115551bf4476d90e8162cf8c345fe233c7", size = 7676, upload-time = "2025-12-17T18:25:33.098Z" },
 ]
+
+[[package]]
+name = "rtttl"
+version = "0.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/03/bb/1232183a17430c81aac86a1ee5ab2ffac9d83adf721332d23a63e0dc056c/rtttl-0.2.tar.gz", hash = "sha256:58a6981ab44d3a514d569328ba5a5849d7dcc60448c8ade169a9ed9a6e1d020a", size = 2748, upload-time = "2015-03-07T17:47:01.904Z" }
 
 [[package]]
 name = "setuptools"
