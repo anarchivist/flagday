@@ -1,4 +1,5 @@
-#(set-global-staff-size 18)
+\version "2.24.4"
+#(set-global-staff-size 17)
 date = #(strftime "%Y-%m-%d" (localtime (current-time)))
 \header {
     composer = \markup {

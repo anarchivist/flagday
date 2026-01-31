@@ -1,6 +1,9 @@
+import argparse
 import copy
 import os
 import re
+
+from pathlib import Path
 from typing import List
 
 import abjad
@@ -11,9 +14,22 @@ from flagday.composition.series import (
     generate_pitch_octave_series,
     generate_random_series,
 )
+from flagday.config.composition import (
+    CompositionConfig,
+    DEFAULT_BPM,
+    DEFAULT_COMPOSITION_CONFIG_FILE
+)
 
 PREAMBLE_FILE = os.path.join(os.getcwd(), 'stylesheets', 'preamble.ily')
-
+ringtones: List[str] = []
+parser = argparse.ArgumentParser(
+    prog="flagday.composition.maker",
+    description="builds scores, etc. for flagday"
+)
+parser.add_argument('-c', '--config', default=DEFAULT_COMPOSITION_CONFIG_FILE)
+# parser.add_argument(
+#     '-o', '--output', type=str, choices=["ly", "midi", "pdf", "rtttl"]
+# )
 
 def make_series_notes(series: SeriesSeq) -> List[abjad.Note | abjad.Tuplet]:
     """
@@ -42,7 +58,10 @@ def make_series_notes(series: SeriesSeq) -> List[abjad.Note | abjad.Tuplet]:
 
 
 def make_staff_and_voice(
-        series: abjad.PitchClassSegment, offset: int = 0, factor: int = 2
+        series: abjad.PitchClassSegment,
+        offset: int = 0,
+        factor: int = 2,
+        bpm: int = DEFAULT_BPM
 ) -> abjad.Staff:
     """
     iteratively create staves and voices, with instrument name annotation
@@ -59,7 +78,8 @@ def make_staff_and_voice(
     current_series = series.rotate(offset * factor)
     voice = abjad.Voice(name=f"Voice_{offset}")
     notes = make_series_notes(current_series)
-    rtttl = rtttl_from_notes(notes)
+    rtttl = rtttl_from_notes(notes, bpm)
+    print(rtttl)
     voice.extend(notes)
     staff = abjad.Staff([voice], name=f"Staff_{offset}")
     string = r"""
@@ -78,7 +98,17 @@ def make_staff_and_voice(
     return staff
 
 
-def rtttl_from_notes(notes: List[abjad.Note | abjad.Tuplet]) -> str:
+def rtttl_from_notes(
+        notes: List[abjad.Note | abjad.Tuplet], bpm: int = DEFAULT_BPM
+    ) -> str:
+    """
+    Generate a RTTTL ringtone string from a list of abjad.Notes
+
+    :param notes: Notes with pitches and durations
+    :type notes: List[abjad.Note | abjad.Tuplet]
+    :return: the RTTTL string
+    :rtype: str
+    """
     rnotes = copy.deepcopy(notes)
     abjad.iterpitches.respell_with_sharps(rnotes)
     rtttl = []
@@ -94,10 +124,10 @@ def rtttl_from_notes(notes: List[abjad.Note | abjad.Tuplet]) -> str:
             else:
                 rtttl.append(f"{d[0]}{pitch}")
 
-    return 'd=16,o=5,b=150:' + ','.join(rtttl)
+    return f'd=16,o=5,b={bpm}:' + ','.join(rtttl)
 
 
-def make_score_from_series(series: SeriesSeq) -> abjad.Score:
+def make_score_from_series(series: SeriesSeq, bpm: int = DEFAULT_BPM) -> abjad.Score:
     """
     given an input series, make 6 different staves to be combined into a score
     ready for furtgher processing
@@ -112,10 +142,10 @@ def make_score_from_series(series: SeriesSeq) -> abjad.Score:
 
     # construct the score, attaching the indicators
     score = abjad.Score(name="score")
-    score.extend([make_staff_and_voice(series, i, 2) for i in range(6)])
+    score.extend([make_staff_and_voice(series, i, 2, bpm) for i in range(6)])
     first_note = abjad.select.note(score, 0)  # pyright: ignore[reportAttributeAccessIssue] # noqa: E501
     abjad.attach(abjad.TimeSignature((3, 4)), first_note)
-    abjad.attach(abjad.MetronomeMark(abjad.Duration(1, 4), 150), first_note)
+    abjad.attach(abjad.MetronomeMark(abjad.Duration(1, 4), bpm), first_note)
 
     # rewrite the meter so we don't get double-dotted quarter notes :(
     meter = abjad.Meter(abjad.meter.make_best_guess_rtc((3, 4)))
@@ -129,18 +159,7 @@ def make_score_from_series(series: SeriesSeq) -> abjad.Score:
     return score
 
 
-def prepare_lilypond_file(
-    series: SeriesSeq = generate_random_series(),
-) -> abjad.LilyPondFile:
-    # leaves = make_series_leaves(series)
-    # score = make_score_from_leaves(leaves)
-    score = make_score_from_series(series)
-    # staff.remove_commands().append("Note_head_engraver")
-    # staff.consists_commands().append("Completion_head_engraver")
-    # staff.remove_commands().append("Rest_engraver")
-    # staff.consists_commands().append("Completion_rest_engraver")
-
-    # midi_block = abjad.Block("midi")
+def prepare_lilypond_file(score: abjad.Score) -> abjad.LilyPondFile:
     layout_block = abjad.Block("layout")
     score_block = abjad.Block("score", [score, layout_block])
     lilypond_file = abjad.LilyPondFile(
@@ -150,8 +169,14 @@ def prepare_lilypond_file(
 
 
 if __name__ == "__main__":
-    ly = prepare_lilypond_file()
-    # print(ly)
-    # abjad.persist.as_pdf(ly, "flagday.pdf")
-    # abjad.persist.as_pdf(ly, "flagday.midi")
+    args = parser.parse_args()
+    cfg_path = Path(args.config)
+    if cfg_path.is_file():
+        cfg = CompositionConfig.load_from_file(args.config)
+    else:
+        cfg = CompositionConfig(
+            bpm=DEFAULT_BPM, series=generate_random_series()
+        )
+    score = make_score_from_series(cfg.series, bpm=cfg.bpm)
+    ly = prepare_lilypond_file(score)
     abjad.show(ly)
