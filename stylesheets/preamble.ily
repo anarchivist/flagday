@@ -1,4 +1,5 @@
 \version "2.24.4"
+% \include "./frame-engraver/package.ly"
 #(set-global-staff-size 17)
 date = #(strftime "%Y-%m-%d" (localtime (current-time)))
 \header {
@@ -45,7 +46,7 @@ date = #(strftime "%Y-%m-%d" (localtime (current-time)))
     }
 }
 \paper {
-    %page-count = 1
+    page-count = 1
     system-system-spacing.stretchability = #12
     property-defaults.fonts.sans = "DINish Regular"
     property-defaults.fonts.typewriter = "Cascadia Code PL"

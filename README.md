@@ -6,7 +6,7 @@ off the grid, decentralized cruising. prepared for [**sweeThe4rTs**](https://sea
 
 ## firmware setup
 
-flagday's `firmware` directory is a Git submodule to [anarchivist/meshtastic-firmware](https://github.com/anarchivist/meshtastic/firmware), a light fork of the official Meshtastic firmware distro.
+flagday's `firmware` directory is a Git submodule to [anarchivist/meshtastic-firmware](https://github.com/anarchivist/meshtastic-firmware), a light fork of the official Meshtastic firmware distro.
 
 1. prereqs: Git, PlatformIO, and maybe VSCode.
 2. clone this repo
@@ -20,7 +20,7 @@ beyond that, you can more or less just consult the [Building Meshtastic Firmware
 
 the code that generates the score (ringtones) and perhaps other utility code is in a Python project in this repo (see the `flagday` and `tests`) directory. dependencies are managed by `uv`. 
 
-1. prereqs: Python >= 3.14, uv, Lilypond.
+1. prereqs: Python >= 3.14, `uv`, Lilypond.
 2. clone this repo
 3. `uv sync`
 4. then, e.g., `uv run python -m flagday.composition.maker`

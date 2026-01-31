@@ -1,3 +1,6 @@
 [submodule "firmware"]
 	path = firmware
 	url = https://github.com/anarchivist/meshtastic-firmware
+[submodule "stylesheets/frame-engraver"]
+	path = stylesheets/frame-engraver
+	url = https://github.com/anarchivist/lilypond-frame-engraver.git

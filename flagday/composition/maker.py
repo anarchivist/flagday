@@ -20,7 +20,8 @@ from flagday.config.composition import (
     DEFAULT_COMPOSITION_CONFIG_FILE
 )
 
-PREAMBLE_FILE = os.path.join(os.getcwd(), 'stylesheets', 'preamble.ily')
+INCLUDES_DIR = os.path.join(os.getcwd(), 'stylesheets')
+PREAMBLE_FILE = os.path.join(INCLUDES_DIR, 'preamble.ily')
 ringtones: List[str] = []
 parser = argparse.ArgumentParser(
     prog="flagday.composition.maker",
@@ -70,18 +71,18 @@ def make_staff_and_voice(
     :type series: abjad.PitchClassSegment
     :param offset: start index, e.g. for an iterator based on range()
     :type offset: int
-    :param factor: multiplication factor for series rotatio
+    :param factor: multiplication factor for series rotation
     :type factor: int
     :return: the combined staff
     :rtype: abjad.Staff
     """
     current_series = series.rotate(offset * factor)
-    voice = abjad.Voice(name=f"Voice_{offset}")
+    voice = abjad.Voice(name=f"Voice_{offset}", simultaneous=False)
     notes = make_series_notes(current_series)
     rtttl = rtttl_from_notes(notes, bpm)
-    print(rtttl)
+    print(f"P{offset + 1}:{rtttl}")
     voice.extend(notes)
-    staff = abjad.Staff([voice], name=f"Staff_{offset}")
+    staff = abjad.Staff([voice], name=f"Staff_{offset}", simultaneous=False)
     string = r"""
     \markup \smaller {
         \hspace #-0.75 \override #'(font-name . "DINish Regular") "Piezo"""
@@ -95,6 +96,9 @@ def make_staff_and_voice(
     )
     abjad.attach(instrument_name, notes[0])
     abjad.attach(rtttl_anno, notes[0])
+    # abjad.attach(abjad.LilyPondLiteral(r"\override Frame #'extender-length = 32"), notes[0])
+    # abjad.attach(abjad.LilyPondLiteral(r"\frameStart"), notes[0])
+    # abjad.attach(abjad.LilyPondLiteral(r"\frameEnd"), notes[-1])
     return staff
 
 
