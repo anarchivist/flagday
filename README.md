@@ -34,7 +34,12 @@ uv run meshtastic -s --port /dev/cu.usbserial-0001 --configure config/base.yaml
 # or uv run meshtastic --ble 'device_name' ... if you want to use Bluetooth instead
 ```
 
-if you want to merge two configs (e.g. the base config and a device specific config containing ringtone, PSK keys, etc.), use `flagday.config.device`.
+if you want to merge two configs (e.g. the base config and a device specific config containing ringtone, PSK keys, etc.), use `flagday.config.device`:
+```bash
+uv run python -m flagday.config.device -c config/base.yaml \
+    -o "flagday base 📵" -s "flgB" -f tmp/device_flagdayBase.yaml \
+    -r "smbdeath:d=4,o=5,b=90:32c6,32p,32c6,8p,16b,16f6,16p,16f6,16f6.,16e6.,16d6,16c6,16p,16e,16p,16c"
+```
 
 you can also use [`yq`](https://mikefarah.gitbook.io/yq):
 

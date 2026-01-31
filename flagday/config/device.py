@@ -2,6 +2,7 @@
 Device configuration management tooling.
 """
 
+import argparse
 import copy
 import os
 
@@ -17,7 +18,15 @@ DEVICE_CONFIG_MAX_LENGTH: dict[str, int] = {
 }
 INVALID_BASE_KEYS: Iterable[str] = DEVICE_CONFIG_MAX_LENGTH.keys()
 INVALID_BASE_SECURITY_KEYS: Iterable[str] = ["privateKey", "publicKey"]
-
+parser = argparse.ArgumentParser(
+    prog="flagday.config.device",
+    description="builds flagday device configs"
+)
+parser.add_argument("-c", "--config", default=DEFAULT_BASE_CONFIG)
+parser.add_argument("-o", "--owner", type=str)
+parser.add_argument("-s", "--owner-short", type=str)
+parser.add_argument("-r", "--ringtone", type=str)
+parser.add_argument("-f", "--output-file")
 
 class InvalidDeviceConfiguration(Exception):
     """
@@ -103,3 +112,18 @@ def generate_device_config(
         device_config[prop] = value
 
     return device_config
+
+if __name__ == "__main__":
+    args = parser.parse_args()
+    base_config = load_base_config(args.config)
+    device_config = generate_device_config(
+        base_config,
+        owner=args.owner,
+        owner_short=args.owner_short,
+        ringtone=args.ringtone
+    )
+    if args.output_file is not None:
+        with open(args.output_file, 'w') as of:
+            yaml.dump(device_config, of)
+    else:
+        print(yaml.dump(device_config))
