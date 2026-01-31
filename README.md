@@ -44,14 +44,16 @@ uv run python -m flagday.config.device -c config/base.yaml \
 you can also use [`yq`](https://mikefarah.gitbook.io/yq):
 
 ```bash
-yq -r '. *= load("config/base.yaml") | sort_keys(.) | ... comments=""' config/device_flagday2.yaml > tmp/flagday2.yaml
+yq -r '. *= load("config/base.yaml") | sort_keys(.) | ... comments=""' \
+    config/device_flagday2.yaml > tmp/flagday2.yaml
 uv run meshtastic -s --port /dev/cu.usbserial-0001 --configure tmp/flagday2.yml
 ```
 
 channel configuration can be a little persnickety from the CLI app even though `channel_url` is specified, so instead, we can do something like this:
 
 ```bash
-uv run meshstastic -s --port /dev/cu.usbserial-0001 --ch-index 0 --ch-set name "#public" --ch-set psk $SHARED_KEY
+uv run meshstastic -s --port /dev/cu.usbserial-0001 \
+    --ch-index 0 --ch-set name "#public" --ch-set psk $SHARED_KEY
 ```
 
 ## compositon configuration
