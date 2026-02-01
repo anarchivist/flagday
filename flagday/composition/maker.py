@@ -153,7 +153,7 @@ def make_score_from_series(
 ) -> abjad.Score:
     """
     given an input series, make 6 different staves to be combined into a score
-    ready for furtgher processing
+    ready for further processing
 
     :param series: input series, e.g. a tone row
     :type series: SeriesSeq

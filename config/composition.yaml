@@ -1,5 +1,6 @@
 # this series is derived from the violin part of Miriam Gideon's
-# "Night is my Sister", and the order that these pitches appear
-# in the score
+# "Night is my Sister", based on the order that these pitch classes
+# appear in the score
 bpm: 160
 series: [2, 8, 10, 3, 4, 7, 1, 6, 0, 5, 11, 9]
+starting_octave: 5
