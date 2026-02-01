@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  score:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -41,3 +41,9 @@ jobs:
     - name: Build score
       run: |
         uv run python -m flagday.composition.maker -o all
+    
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        path: output/*
+        name: flagday-score-${{ github.sha }}-${{ github.run_id }}
