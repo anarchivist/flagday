@@ -4,7 +4,7 @@ import os
 import re
 
 from pathlib import Path
-from typing import List
+from typing import List, Sequence
 
 import abjad
 
@@ -56,6 +56,7 @@ def make_series_notes(series: SeriesSeq) -> List[abjad.Note | abjad.Tuplet]:
     lists = abjad.mutate.split(notes, [abjad.Duration(3, 4)], cyclic=True)
     for c in lists:
         abjad.mutate.wrap(c, abjad.Container())
+    notes.extend(abjad.Container('r2.'))
     return notes
 
 
@@ -97,6 +98,7 @@ def make_staff_and_voice(
     )
     abjad.attach(instrument_name, notes[0])
     abjad.attach(rtttl_anno, notes[0])
+    abjad.attach(abjad.BarLine(":|."), notes[-1])
     # abjad.attach(abjad.LilyPondLiteral(
     #       r"\override Frame #'extender-length = 32")
     # , notes[0])
@@ -106,7 +108,8 @@ def make_staff_and_voice(
 
 
 def rtttl_from_notes(
-        notes: List[abjad.Note | abjad.Tuplet], bpm: int = DEFAULT_BPM
+        notes: Sequence[abjad.Note | abjad.Tuplet | abjad.Rest],
+        bpm: int = DEFAULT_BPM
 ) -> str:
     """
     Generate a RTTTL ringtone string from a list of abjad.Notes
@@ -120,8 +123,11 @@ def rtttl_from_notes(
     abjad.iterpitches.respell_with_sharps(rnotes)
     rtttl = []
     for c in abjad.iterate.components(rnotes):
-        if isinstance(c, abjad.Note):
-            pitch = c.written_pitch().get_name_in_locale('us').lower()  # type: ignore # noqa: e%01
+        if isinstance(c, abjad.Note | abjad.Rest):
+            if isinstance(c, abjad.Note):
+                pitch = c.written_pitch().get_name_in_locale('us').lower()  # type: ignore # noqa: e501
+            else:
+                pitch = "p"
             duration = c.written_duration().lilypond_duration_string()
             d = re.findall(r"\d+", duration)
             if '.' in duration:
@@ -161,11 +167,6 @@ def make_score_from_series(
     meter = abjad.Meter(abjad.meter.make_best_guess_rtc((3, 4)))
     meter.rewrite(score[:], maximum_dot_count=1)
 
-    # add a final repeat barline
-    abjad.attach(
-        abjad.BarLine(":|."),
-        abjad.select.note(score, -1)  # pyright: ignore[reportAttributeAccessIssue] # noqa: E501
-    )
     return score
 
 
