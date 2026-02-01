@@ -1,0 +1,43 @@
+name: Build score
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.14"]
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Setup uv
+      uses: astral-sh/setup-uv@v7
+    - name: Setup Lilypond
+      uses: codello/setup-lilypond@main
+      with:
+        lilypond-version: 2.24
+    - name: Install fonts
+      run: |
+        sudo apt install -y wget unzip fontconfig
+        wget https://github.com/playbeing/dinish/releases/download/v4.007/dinish-ttf.zip
+        unzip dinish-ttf.zip -d dinish
+        mkdir -p /usr/share/fonts/truetype/dinish
+        cp dinish/*.ttf /usr/share/fonts/truetype/dinish
+        wget https://github.com/microsoft/cascadia-code/releases/download/v2407.24/CascadiaCode-2407.24.zip
+        unzip CascadiaCode-2407.24.zip -d cascadia-code
+        mkdir -p /usr/share/fonts/truetype/cascadia-code
+        cp -R cascadia-code/ttf/* /usr/share/fonts/truetype/cascadia-code
+        fc-cache -f -v
+    - name: Build score
+      run: |
+        uv run python -m flagday.composition.maker -o all
