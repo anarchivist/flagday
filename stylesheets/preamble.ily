@@ -49,5 +49,5 @@ date = #(strftime "%Y-%m-%d" (localtime (current-time)))
     page-count = 1
     system-system-spacing.stretchability = #12
     property-defaults.fonts.sans = "DINish Regular"
-    property-defaults.fonts.typewriter = "Cascadia Code PL"
+    property-defaults.fonts.typewriter = "Cascadia Code"
 }

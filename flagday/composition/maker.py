@@ -97,7 +97,8 @@ def make_staff_and_voice(
     string += f" {offset + 1}\" " + "\n}"
     instrument_name = abjad.InstrumentName(string)
     rtttl_anno = abjad.Markup(
-            r"\markup \fontsize #-5 \override #'(font-family . typewriter) "
+            r"\markup \fontsize #-5 "
+            r"\override #'" + r'(font-name . "Cascadia Code Italic")'
             r"{ \hspace #-9"
             f"\"P{offset + 1}:{rtttl}\""
             r"}"
@@ -165,7 +166,12 @@ def make_score_from_series(
 
     # construct the score, attaching the indicators
     score = abjad.Score(name="score")
-    score.extend([make_staff_and_voice(series, i, 2, bpm, starting_octave) for i in range(6)])
+    current_octave = starting_octave
+    for i in range(6):
+        current_octave += i
+        if current_octave > 7:
+            current_octave = 4
+        score.append(make_staff_and_voice(series, i, 2, bpm, current_octave))
     first_note = abjad.select.note(score, 0)  # pyright: ignore[reportAttributeAccessIssue] # noqa: E501
     abjad.attach(abjad.TimeSignature((3, 4)), first_note)
     abjad.attach(abjad.MetronomeMark(abjad.Duration(1, 4), bpm), first_note)
