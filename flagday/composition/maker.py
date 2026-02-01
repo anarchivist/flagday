@@ -21,6 +21,7 @@ from flagday.config.composition import (
 )
 
 INCLUDES_DIR = os.path.join(os.getcwd(), 'stylesheets')
+OUTPUT_DIR = os.path.join(os.getcwd(), 'output')
 PREAMBLE_FILE = os.path.join(INCLUDES_DIR, 'preamble.ily')
 ringtones: List[str] = []
 parser = argparse.ArgumentParser(
@@ -28,12 +29,14 @@ parser = argparse.ArgumentParser(
     description="builds scores, etc. for flagday"
 )
 parser.add_argument('-c', '--config', default=DEFAULT_COMPOSITION_CONFIG_FILE)
-# parser.add_argument(
-#     '-o', '--output', type=str, choices=["ly", "midi", "pdf", "rtttl"]
-# )
+parser.add_argument(
+    '-o', '--output', type=str, choices=["all", "ly", "midi", "pdf", "rtttl"]
+)
 
 
-def make_series_notes(series: SeriesSeq) -> List[abjad.Note | abjad.Tuplet]:
+def make_series_notes(
+    series: SeriesSeq
+) -> Sequence[abjad.Note | abjad.Tuplet]:
     """
     make a list set of abjad.Notes from an input seriese
 
@@ -82,7 +85,7 @@ def make_staff_and_voice(
     voice = abjad.Voice(name=f"Voice_{offset}", simultaneous=False)
     notes = make_series_notes(current_series)
     rtttl = rtttl_from_notes(notes, bpm)
-    print(f"P{offset + 1}:{rtttl}")
+    ringtones.append(f"P{offset + 1}:{rtttl}")  # fixme: globals :(
     voice.extend(notes)
     staff = abjad.Staff([voice], name=f"Staff_{offset}", simultaneous=False)
     string = r"""
@@ -172,7 +175,8 @@ def make_score_from_series(
 
 def prepare_lilypond_file(score: abjad.Score) -> abjad.LilyPondFile:
     layout_block = abjad.Block("layout")
-    score_block = abjad.Block("score", [score, layout_block])
+    midi_block = abjad.Block("midi")
+    score_block = abjad.Block("score", [score, midi_block, layout_block])
     lilypond_file = abjad.LilyPondFile(
         [rf'\include "{PREAMBLE_FILE}"', score_block]
     )
@@ -190,4 +194,23 @@ if __name__ == "__main__":
         )
     score = make_score_from_series(cfg.series, bpm=cfg.bpm)
     ly = prepare_lilypond_file(score)
-    abjad.show(ly)
+    match args.output:
+        case "ly":
+            abjad.persist.as_ly(ly, os.path.join(OUTPUT_DIR, "flagday.ly"))
+        case "midi":  # not working
+            abjad.persist.as_midi(ly, os.path.join(OUTPUT_DIR, "flagday.midi"))
+        case "pdf":
+            abjad.persist.as_pdf(ly, os.path.join(OUTPUT_DIR, "flagday.pdf"))
+        case "rtttl":
+            with open(os.path.join(OUTPUT_DIR, "flagday.rtttl"), "w") as fh:
+                fh.write("\n".join(ringtones))
+                fh.write("\n")
+        case "all":
+            abjad.persist.as_midi(ly, os.path.join(OUTPUT_DIR, "flagday.midi"))
+            abjad.persist.as_ly(ly, os.path.join(OUTPUT_DIR, "flagday.ly"))
+            abjad.persist.as_pdf(ly, os.path.join(OUTPUT_DIR, "flagday.pdf"))
+            with open(os.path.join(OUTPUT_DIR, "flagday.rtttl"), "w") as fh:
+                fh.write("\n".join(ringtones))
+                fh.write("\n")
+        case _:
+            abjad.show(ly)
