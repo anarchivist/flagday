@@ -28,6 +28,7 @@ parser.add_argument("-s", "--owner-short", type=str)
 parser.add_argument("-r", "--ringtone", type=str)
 parser.add_argument("-f", "--output-file")
 
+
 class InvalidDeviceConfiguration(Exception):
     """
     A catch-all exception for flagday-
@@ -112,6 +113,7 @@ def generate_device_config(
         device_config[prop] = value
 
     return device_config
+
 
 if __name__ == "__main__":
     args = parser.parse_args()

@@ -32,6 +32,7 @@ parser.add_argument('-c', '--config', default=DEFAULT_COMPOSITION_CONFIG_FILE)
 #     '-o', '--output', type=str, choices=["ly", "midi", "pdf", "rtttl"]
 # )
 
+
 def make_series_notes(series: SeriesSeq) -> List[abjad.Note | abjad.Tuplet]:
     """
     make a list set of abjad.Notes from an input seriese
@@ -96,7 +97,9 @@ def make_staff_and_voice(
     )
     abjad.attach(instrument_name, notes[0])
     abjad.attach(rtttl_anno, notes[0])
-    # abjad.attach(abjad.LilyPondLiteral(r"\override Frame #'extender-length = 32"), notes[0])
+    # abjad.attach(abjad.LilyPondLiteral(
+    #       r"\override Frame #'extender-length = 32")
+    # , notes[0])
     # abjad.attach(abjad.LilyPondLiteral(r"\frameStart"), notes[0])
     # abjad.attach(abjad.LilyPondLiteral(r"\frameEnd"), notes[-1])
     return staff
@@ -104,7 +107,7 @@ def make_staff_and_voice(
 
 def rtttl_from_notes(
         notes: List[abjad.Note | abjad.Tuplet], bpm: int = DEFAULT_BPM
-    ) -> str:
+) -> str:
     """
     Generate a RTTTL ringtone string from a list of abjad.Notes
 
@@ -131,7 +134,10 @@ def rtttl_from_notes(
     return f'd=16,o=5,b={bpm}:' + ','.join(rtttl)
 
 
-def make_score_from_series(series: SeriesSeq, bpm: int = DEFAULT_BPM) -> abjad.Score:
+def make_score_from_series(
+        series: SeriesSeq,
+        bpm: int = DEFAULT_BPM
+) -> abjad.Score:
     """
     given an input series, make 6 different staves to be combined into a score
     ready for furtgher processing

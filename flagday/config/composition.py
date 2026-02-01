@@ -16,6 +16,7 @@ DEFAULT_COMPOSITION_CONFIG_FILE: str = os.path.join(
     os.getcwd(), "config", "composition.yaml"
 )
 
+
 class CompositionConfig:
     bpm: int = DEFAULT_BPM
     series: SeriesSeq = []
@@ -32,7 +33,7 @@ class CompositionConfig:
             cfg = yaml.safe_load(file)
             if None in (cfg.get("bpm"), parse_bpm(cfg.get("bpm"))):
                 warnings.warn(
-                    f"bpm {cfg.get["bpm"]} empty or not valid in RTTTL spec", 
+                    f"bpm {cfg.get["bpm"]} empty or not valid in RTTTL spec",
                     InvalidBPMForRTTTL
                 )
                 if parse_bpm(cfg.get("bpm")) is None:
@@ -43,6 +44,6 @@ class CompositionConfig:
 
         return CompositionConfig(bpm=cfg["bpm"], series=cfg["series"])
 
+
 class InvalidBPMForRTTTL(RuntimeWarning):
     pass
-    
