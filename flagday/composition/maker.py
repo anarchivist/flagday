@@ -132,7 +132,8 @@ def rtttl_from_notes(
     for c in abjad.iterate.components(rnotes):
         if isinstance(c, abjad.Note | abjad.Rest):
             if isinstance(c, abjad.Note):
-                pitch = c.written_pitch().get_name_in_locale('us').lower()  # type: ignore # noqa: e501
+                pitch = c.written_pitch() \
+                            .get_name_in_locale('us').lower()  # type: ignore
             else:
                 pitch = "p"
             duration = c.written_duration().lilypond_duration_string()
@@ -201,7 +202,8 @@ if __name__ == "__main__":
     else:
         cfg = CompositionConfig(
             bpm=DEFAULT_BPM,
-            series=generate_random_series(), starting_octave=DEFAULT_STARTING_OCTAVE
+            series=generate_random_series(), 
+            starting_octave=DEFAULT_STARTING_OCTAVE
         )
     score = make_score_from_series(
         cfg.series,
