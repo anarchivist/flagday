@@ -12,6 +12,7 @@ from rtttl.parser import parse_bpm
 from flagday.composition.series import SeriesSeq, generate_random_series
 
 DEFAULT_BPM: int = 160
+DEFAULT_STARTING_OCTAVE = 5
 DEFAULT_COMPOSITION_CONFIG_FILE: str = os.path.join(
     os.getcwd(), "config", "composition.yaml"
 )
@@ -21,9 +22,15 @@ class CompositionConfig:
     bpm: int = DEFAULT_BPM
     series: SeriesSeq = []
 
-    def __init__(self, bpm: int = DEFAULT_BPM, series: SeriesSeq = []) -> None:
+    def __init__(
+        self,
+        bpm: int = DEFAULT_BPM,
+        series: SeriesSeq = [],
+        starting_octave: int = DEFAULT_STARTING_OCTAVE
+    ) -> None:
         self.bpm = bpm
         self.series = series
+        self.starting_octave = starting_octave
 
     @classmethod
     def load_from_file(
@@ -41,8 +48,14 @@ class CompositionConfig:
             if cfg.get("series") is None:
                 warnings.warn("series is empty; defaulting to random series")
                 cfg["series"] = generate_random_series()
+            if cfg["starting_octave"] is None:
+                cfg["starting_octave"] = DEFAULT_STARTING_OCTAVE
 
-        return CompositionConfig(bpm=cfg["bpm"], series=cfg["series"])
+        return CompositionConfig(
+            bpm=cfg["bpm"],
+            series=cfg["series"],
+            starting_octave=cfg["starting_octave"]
+        )
 
 
 class InvalidBPMForRTTTL(RuntimeWarning):

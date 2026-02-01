@@ -17,7 +17,8 @@ from flagday.composition.series import (
 from flagday.config.composition import (
     CompositionConfig,
     DEFAULT_BPM,
-    DEFAULT_COMPOSITION_CONFIG_FILE
+    DEFAULT_COMPOSITION_CONFIG_FILE,
+    DEFAULT_STARTING_OCTAVE
 )
 
 INCLUDES_DIR = os.path.join(os.getcwd(), 'stylesheets')
@@ -35,8 +36,9 @@ parser.add_argument(
 
 
 def make_series_notes(
-    series: SeriesSeq
-) -> Sequence[abjad.Note | abjad.Tuplet]:
+    series: SeriesSeq,
+    starting_octave: int = DEFAULT_STARTING_OCTAVE,
+) -> Sequence[abjad.Note | abjad.Rest | abjad.Tuplet]:
     """
     make a list set of abjad.Notes from an input seriese
 
@@ -49,7 +51,7 @@ def make_series_notes(
         series = abjad.PitchClassSegment(series)
 
     pitch_series = generate_pitch_octave_series(
-        series, starting_octave=abjad.Octave(5)
+        series, starting_octave=abjad.Octave(starting_octave)
     )
     pitch_list = abjad.makers.make_pitches(pitch_series)
     durations = generate_babbitt_timepoint_set(series)
@@ -67,7 +69,8 @@ def make_staff_and_voice(
         series: abjad.PitchClassSegment,
         offset: int = 0,
         factor: int = 2,
-        bpm: int = DEFAULT_BPM
+        bpm: int = DEFAULT_BPM,
+        starting_octave: int = DEFAULT_STARTING_OCTAVE
 ) -> abjad.Staff:
     """
     iteratively create staves and voices, with instrument name annotation
@@ -83,7 +86,7 @@ def make_staff_and_voice(
     """
     current_series = series.rotate(offset * factor)
     voice = abjad.Voice(name=f"Voice_{offset}", simultaneous=False)
-    notes = make_series_notes(current_series)
+    notes = make_series_notes(current_series, starting_octave=starting_octave)
     rtttl = rtttl_from_notes(notes, bpm)
     ringtones.append(f"P{offset + 1}:{rtttl}")  # fixme: globals :(
     voice.extend(notes)
@@ -145,7 +148,8 @@ def rtttl_from_notes(
 
 def make_score_from_series(
         series: SeriesSeq,
-        bpm: int = DEFAULT_BPM
+        bpm: int = DEFAULT_BPM,
+        starting_octave: int = DEFAULT_STARTING_OCTAVE
 ) -> abjad.Score:
     """
     given an input series, make 6 different staves to be combined into a score
@@ -161,7 +165,7 @@ def make_score_from_series(
 
     # construct the score, attaching the indicators
     score = abjad.Score(name="score")
-    score.extend([make_staff_and_voice(series, i, 2, bpm) for i in range(6)])
+    score.extend([make_staff_and_voice(series, i, 2, bpm, starting_octave) for i in range(6)])
     first_note = abjad.select.note(score, 0)  # pyright: ignore[reportAttributeAccessIssue] # noqa: E501
     abjad.attach(abjad.TimeSignature((3, 4)), first_note)
     abjad.attach(abjad.MetronomeMark(abjad.Duration(1, 4), bpm), first_note)
@@ -190,9 +194,15 @@ if __name__ == "__main__":
         cfg = CompositionConfig.load_from_file(args.config)
     else:
         cfg = CompositionConfig(
-            bpm=DEFAULT_BPM, series=generate_random_series()
+            bpm=DEFAULT_BPM,
+            series=generate_random_series(), starting_octave=DEFAULT_STARTING_OCTAVE
         )
-    score = make_score_from_series(cfg.series, bpm=cfg.bpm)
+    score = make_score_from_series(
+        cfg.series,
+        bpm=cfg.bpm,
+        starting_octave=cfg.starting_octave
+    )
+    print(cfg.starting_octave)
     ly = prepare_lilypond_file(score)
     match args.output:
         case "ly":

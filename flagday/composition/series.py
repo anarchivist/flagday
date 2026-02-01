@@ -74,7 +74,12 @@ def generate_pitch_octave_series(
 
     po_series = zip(
         generate_pitch_series(series),
-        generate_octave_series(series)
+        generate_octave_series(
+            series,
+            starting_octave=starting_octave,
+            min_octave=min_octave,
+            max_octave=max_octave
+        )
     )
 
     return [abjad.NamedPitch(po) for po in po_series]  # type: ignore
