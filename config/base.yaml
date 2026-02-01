@@ -53,8 +53,8 @@ module_config:
   cannedMessage:
     allowInputSource: rotEnc1
     enabled: true
-    inputbrokerEventCcw: DOWN
-    inputbrokerEventCw: UP
+    inputbrokerEventCcw: UP
+    inputbrokerEventCw: DOWN
     inputbrokerEventPress: SELECT
     inputbrokerPinA: 3
     inputbrokerPinB: 4
