@@ -15,7 +15,9 @@ jobs:
         python-version: ["3.14"]
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
+      with:
+        submodules: true
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
       with:
@@ -29,11 +31,11 @@ jobs:
     - name: Install fonts and ghostscript
       run: |
         sudo apt install -y wget unzip fontconfig ghostscript
-        wget https://github.com/playbeing/dinish/releases/download/v4.007/dinish-ttf.zip
+        wget -q https://github.com/playbeing/dinish/releases/download/v4.007/dinish-ttf.zip
         unzip dinish-ttf.zip -d dinish
         mkdir -p /usr/share/fonts/truetype/dinish
         cp dinish/*.ttf /usr/share/fonts/truetype/dinish
-        wget https://github.com/microsoft/cascadia-code/releases/download/v2407.24/CascadiaCode-2407.24.zip
+        wget -q https://github.com/microsoft/cascadia-code/releases/download/v2407.24/CascadiaCode-2407.24.zip
         unzip CascadiaCode-2407.24.zip -d cascadia-code
         mkdir -p /usr/share/fonts/truetype/cascadia-code
         cp -R cascadia-code/ttf/* /usr/share/fonts/truetype/cascadia-code
