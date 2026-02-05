@@ -1,6 +1,6 @@
 \version "2.24.4"
-% \include "./frame-engraver/package.ly"
-#(set-global-staff-size 16)
+\include "./frame-engraver/package.ly"
+#(set-global-staff-size 15)
 #(set-default-paper-size "letter" 'landscape)
 date = #(strftime "%Y-%m-%d" (localtime (current-time)))
 \header {
@@ -37,27 +37,37 @@ date = #(strftime "%Y-%m-%d" (localtime (current-time)))
     }
     tagline = ##f
     copyright = \markup {
+        \vspace #1
         \override #'(font-name . "DINish Bold Small-Caps")
         \smallCaps "© & ℗ 2026 Imprecision Art (ASCAP)"
     }
 }
 \layout {
     \context {
+        \Global
+        \grobdescriptions #all-grob-descriptions
+    }
+    \context {
         \Staff
-        \override VerticalAxisGroup.staff-staff-spacing.minimum-distance = #20
+        \override VerticalAxisGroup.staff-staff-spacing.minimum-distance = #22
     }
     \context {
         \Score
         \override SystemStartBar.stencil = ##f
     }
+    \context {
+        \Voice
+        \consists \frameEngraver
+        \override FrameBracket.no-bracket = ##t
+    }
 }
 \paper {
     page-count = 1
     % system-system-spacing.stretchability = #12
-    top-margin = 0.25\in
-    bottom-margin = 0.25\in
-    left-margin = 0.25\in
-    right-margin = 0.5\in
+    top-margin = 0.375\in
+    bottom-margin = 0.375\in
+    left-margin = 0.375\in
+    right-margin = 0.375\in
     ragged-right = ##f
     property-defaults.fonts.sans = "DINish Regular"
     property-defaults.fonts.typewriter = "Cascadia Code"

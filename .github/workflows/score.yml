@@ -26,9 +26,9 @@ jobs:
       uses: codello/setup-lilypond@main
       with:
         lilypond-version: 2.24
-    - name: Install fonts
+    - name: Install fonts and ghostscript
       run: |
-        sudo apt install -y wget unzip fontconfig
+        sudo apt install -y wget unzip fontconfig ghostscript
         wget https://github.com/playbeing/dinish/releases/download/v4.007/dinish-ttf.zip
         unzip dinish-ttf.zip -d dinish
         mkdir -p /usr/share/fonts/truetype/dinish

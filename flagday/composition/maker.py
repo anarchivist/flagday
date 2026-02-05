@@ -96,23 +96,20 @@ def make_staff_and_voice(
     staff = abjad.Staff([voice], name=f"Staff_{offset}", simultaneous=False)
     string = r"""
     \markup \smaller {
-        \hspace #-0.75 \override #'(font-name . "DINish Regular") "Piezo"""
+        \hspace #-5 \override #'(font-name . "DINish Regular") "Piezo"""
     string += f" {offset + 1}\" " + "\n}"
     instrument_name = abjad.InstrumentName(string)
     rtttl_anno = abjad.Markup(
             r"\markup \fontsize #-5 "
             r"\override #'" + r'(font-name . "Cascadia Code Italic")'
-            r"{ \hspace #-9"
+            # r"{ \hspace #-9"
             f"\"P{offset + 1}:{rtttl}\""
             r"}"
     )
     abjad.attach(instrument_name, notes[0])
-    abjad.attach(rtttl_anno, notes[0])
-    # abjad.attach(abjad.LilyPondLiteral(
-    #     r"\override Frame #'extender-length = 32"),
-    # notes[0])
-    # abjad.attach(abjad.LilyPondLiteral(r"\frameStart"), notes[0])
-    # abjad.attach(abjad.LilyPondLiteral(r"\frameEnd"), notes[-1])
+    # abjad.attach(rtttl_anno, notes[0])
+    abjad.attach(abjad.LilyPondLiteral(r"\frameStart"), notes[0])
+    abjad.attach(abjad.LilyPondLiteral(r"\frameEnd"), notes[-1])
     abjad.attach(abjad.BarLine(":|."), notes[-1])
     return staff
 
