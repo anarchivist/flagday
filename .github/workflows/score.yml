@@ -42,7 +42,7 @@ jobs:
         fc-cache -f -v
     - name: Build score
       run: |
-        uv run python -m flagday.composition.maker -o all
+        uv run python -m flagday.composition.maker -o all --embed-fonts
     
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
