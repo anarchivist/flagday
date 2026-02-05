@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import List, Sequence
 
 import abjad
+import ghostscript
 
 from flagday.composition.series import (
     SeriesSeq,
@@ -23,6 +24,7 @@ from flagday.config.composition import (
 
 INCLUDES_DIR = os.path.join(os.getcwd(), 'stylesheets')
 OUTPUT_DIR = os.path.join(os.getcwd(), 'output')
+RES_DIR = os.path.join(OUTPUT_DIR, 'resdir')
 PREAMBLE_FILE = os.path.join(INCLUDES_DIR, 'preamble.ily')
 ringtones: List[str] = []
 parser = argparse.ArgumentParser(
@@ -33,6 +35,7 @@ parser.add_argument('-c', '--config', default=DEFAULT_COMPOSITION_CONFIG_FILE)
 parser.add_argument(
     '-o', '--output', type=str, choices=["all", "ly", "midi", "pdf", "rtttl"]
 )
+parser.add_argument('--embed-fonts', action=argparse.BooleanOptionalAction)
 
 
 def make_series_notes(
@@ -105,12 +108,12 @@ def make_staff_and_voice(
     )
     abjad.attach(instrument_name, notes[0])
     abjad.attach(rtttl_anno, notes[0])
-    abjad.attach(abjad.BarLine(":|."), notes[-1])
     # abjad.attach(abjad.LilyPondLiteral(
-    #       r"\override Frame #'extender-length = 32")
-    # , notes[0])
+    #     r"\override Frame #'extender-length = 32"),
+    # notes[0])
     # abjad.attach(abjad.LilyPondLiteral(r"\frameStart"), notes[0])
     # abjad.attach(abjad.LilyPondLiteral(r"\frameEnd"), notes[-1])
+    abjad.attach(abjad.BarLine(":|."), notes[-1])
     return staff
 
 
@@ -184,15 +187,33 @@ def make_score_from_series(
     return score
 
 
-def prepare_lilypond_file(score: abjad.Score) -> abjad.LilyPondFile:
+def prepare_lilypond_file(score: abjad.Score, embed_fonts: bool = False) -> abjad.LilyPondFile:
     layout_block = abjad.Block("layout")
     midi_block = abjad.Block("midi")
     score_block = abjad.Block("score", [score, midi_block, layout_block])
-    lilypond_file = abjad.LilyPondFile(
-        [rf'\include "{PREAMBLE_FILE}"', score_block]
-    )
+    parts = [rf'\include "{PREAMBLE_FILE}"', score_block]
+    if embed_fonts:
+        parts.append(rf"""
+            #(ly:set-option 'font-ps-resdir '{RES_DIR})
+            #(ly:set-option 'gs-never-embed-fonts ##t)
+        """)
+    lilypond_file = abjad.LilyPondFile(parts)
     return lilypond_file
 
+def make_pdf(
+    ly: abjad.LilyPondFile,
+    output: str=f"{OUTPUT_DIR}/flagday.pdf",
+    embed_fonts: bool=False
+) -> None:
+    abjad.persist.as_pdf(ly, output)
+    if embed_fonts:
+        pdf_no_fonts = os.path.join(OUTPUT_DIR, "flagday.nofonts.pdf")
+        os.rename(output, pdf_no_fonts)
+        ghostscript.Ghostscript(*[
+            "gs", "-q", "-dBATCH", "-dNOPAUSE", "-sDEVICE=pdfwrite",
+            f"-sOutputFile={output}",
+            f"-I ${RES_DIR}", f"-I ${RES_DIR}/Font", pdf_no_fonts
+        ])
 
 if __name__ == "__main__":
     args = parser.parse_args()
@@ -210,7 +231,6 @@ if __name__ == "__main__":
         bpm=cfg.bpm,
         starting_octave=cfg.starting_octave
     )
-    print(cfg.starting_octave)
     ly = prepare_lilypond_file(score)
     match args.output:
         case "ly":
@@ -218,7 +238,7 @@ if __name__ == "__main__":
         case "midi":  # not working
             abjad.persist.as_midi(ly, os.path.join(OUTPUT_DIR, "flagday.midi"))
         case "pdf":
-            abjad.persist.as_pdf(ly, os.path.join(OUTPUT_DIR, "flagday.pdf"))
+            make_pdf(ly, embed_fonts=args.embed_fonts)
         case "rtttl":
             with open(os.path.join(OUTPUT_DIR, "flagday.rtttl"), "w") as fh:
                 fh.write("\n".join(ringtones))
@@ -226,7 +246,7 @@ if __name__ == "__main__":
         case "all":
             abjad.persist.as_midi(ly, os.path.join(OUTPUT_DIR, "flagday.midi"))
             abjad.persist.as_ly(ly, os.path.join(OUTPUT_DIR, "flagday.ly"))
-            abjad.persist.as_pdf(ly, os.path.join(OUTPUT_DIR, "flagday.pdf"))
+            make_pdf(ly, embed_fonts=args.embed_fonts)
             with open(os.path.join(OUTPUT_DIR, "flagday.rtttl"), "w") as fh:
                 fh.write("\n".join(ringtones))
                 fh.write("\n")

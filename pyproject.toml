@@ -6,10 +6,8 @@ readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "abjad>=3.31",
+    "ghostscript>=0.8.1",
     "meshtastic>=2.7.6",
-    "mutwo-core>=2.0.0",
-    "mutwo-midi>=0.12.1",
-    "mutwo-music>=0.29.0",
     "pyyaml>=6.0.3",
     "rtttl>=0.2",
 ]
