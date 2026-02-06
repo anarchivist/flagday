@@ -29,7 +29,7 @@ date = #(strftime "%Y-%m-%d" (localtime (current-time)))
                 \line {
                     \override #'(font-name . "DINish Regular Italic")
                     \normal-text \smaller \italic
-                    "Piezoelectric buzzers should sound at irregular intervals during the piece's duration as if they were ringtones."
+                    "Piezoelectric buzzers should sound at irregular intervals during the piece's duration as if they were ringtones. One should remain silent while the others are playing."
                 }
                 \vspace #0.5
             }
