@@ -2,13 +2,16 @@
 
 # flagday
 
-off the grid, decentralized cruising. prepared for [**sweeThe4rTs**](https://seattlepride.org/events/sweethearts-a-t4t-art-show), opening February 13, 2026, at Common Objects, Seattle, WA.
+a conceptual art piece on off the grid, decentralized cruising. this installation has been shown at:
+
+* [**sweeThe4rTs**](https://seattlepride.org/events/sweethearts-a-t4t-art-show), February 13-March 5, 2026, Common Objects, Seattle, WA
+* [**Teardown 2026**](https://www.crowdsupply.com/teardown/portland-2026), July 24-26, 2026, Portland, OR
 
 ## firmware setup
 
 flagday's `firmware` directory is a Git submodule to [anarchivist/meshtastic-firmware](https://github.com/anarchivist/meshtastic-firmware), a light fork of the official Meshtastic firmware distro.
 
-1. prereqs: Git, PlatformIO, and maybe VSCode.
+1. prereqs: Git, PlatformIO, and VSCode with pioarduino (optional, but recommended).
 2. clone this repo
 3. `git submodule update --init --recursive`
 
