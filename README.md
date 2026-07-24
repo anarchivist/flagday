@@ -11,7 +11,7 @@ a conceptual art piece on off the grid, decentralized cruising. this installatio
 
 flagday's `firmware` directory is a Git submodule to [anarchivist/meshtastic-firmware](https://github.com/anarchivist/meshtastic-firmware), a light fork of the official Meshtastic firmware distro.
 
-1. prereqs: Git, PlatformIO, and VSCode with pioarduino (optional, but recommended).
+1. prereqs: Git, pioarduino, and VSCode with the pioarduino IDE plugin (optional, but recommended if you use VSCode).
 2. clone this repo
 3. `git submodule update --init --recursive`
 
